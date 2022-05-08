@@ -7,30 +7,25 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.UUID;
 
 @Data
+@Entity
 @Builder
 @AllArgsConstructor
-@Entity
-@Table(name = "city_case")
+@Table(name = "contractor")
 @NoArgsConstructor
-public class CityCase {
+public class ContractorInfo {
 	@Id
 	@GeneratedValue(generator = "UUID")
 	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
 	private UUID id;
 
-	private String location;
-	private String description;
+	private String area;
+	private String fullName;
+	private long inn;
 
-	@ElementCollection
-	@CollectionTable(name = "files", joinColumns = @JoinColumn(name = "city_case_id"))
-	@Column(name = "file_link")
-	private List<String> files;
-
-	@ManyToOne
-	@JoinColumn(name = "author_id")
-	private User author;
+	@OneToOne
+	@JoinColumn(name = "user_id")
+	private User userInfo;
 }

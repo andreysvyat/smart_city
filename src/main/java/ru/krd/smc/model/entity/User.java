@@ -9,6 +9,8 @@ import ru.krd.smc.model.enums.UserType;
 
 import javax.persistence.*;
 
+import java.util.UUID;
+
 import static javax.persistence.EnumType.STRING;
 
 @Data
@@ -18,17 +20,17 @@ import static javax.persistence.EnumType.STRING;
 @Table(name = "app_user")
 @NoArgsConstructor
 public class User {
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    private String uuid;
+	@Id
+	@GeneratedValue(generator = "UUID")
+	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+	private UUID id;
 
-    @Enumerated(STRING)
-    private UserType type;
+	@Enumerated(STRING)
+	private UserType type;
 
-    private String login;
-    private String firstName;
-    private String middleName;
-    private String lastName;
-
+	private String login;
+	private String firstName;
+	private String middleName;
+	private String lastName;
+	private String email;
 }

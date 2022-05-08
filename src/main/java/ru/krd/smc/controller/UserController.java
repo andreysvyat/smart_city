@@ -16,17 +16,17 @@ import ru.krd.smc.model.rq.NewUser;
 @RequestMapping("/user")
 public class UserController {
 
-    private final UserRepo repo;
+	private final UserRepo repo;
 
-    @PostMapping
-    public String addUser(@RequestBody NewUser user) {
-        return repo.save(User.builder()
-                                 .firstName(user.getFirstName())
-                                 .lastName(user.getLastName())
-                                 .login(user.getLogin())
-                                 .middleName(user.getMiddleName())
-                                 .type(user.getType())
-                                 .build())
-                .getUuid();
-    }
+	@PostMapping
+	public String addUser(@RequestBody NewUser user) {
+		User eUser = User.builder()
+				.firstName(user.getFirstName())
+				.lastName(user.getLastName())
+				.login(user.getLogin())
+				.middleName(user.getMiddleName())
+				.type(user.getType())
+				.build();
+		return repo.save(eUser).getId().toString();
+	}
 }

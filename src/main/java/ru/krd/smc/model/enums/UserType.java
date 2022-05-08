@@ -1,7 +1,12 @@
 package ru.krd.smc.model.enums;
 
-public enum UserType {
-    CITIZEN,
-    OPERATOR,
-    PERFORMER
+public enum UserType implements Displayable{
+	CITIZEN,
+	OPERATOR,
+	CONTRACTOR;
+
+	@Override
+	public String display() {
+		return name();
+	}
 }
