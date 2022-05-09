@@ -12,8 +12,11 @@ create table if not exists app_user (
 create table if not exists city_case (
     id uuid not null,
     description varchar(255),
-    location varchar(255),
+    location varchar(255) not null,
     author_id uuid references app_user(id) not null,
+    inited_on timestamp with time zone not null,
+    status varchar(64) not null,
+    city_case_type varchar(64) not null,
     primary key (id)
 );
 

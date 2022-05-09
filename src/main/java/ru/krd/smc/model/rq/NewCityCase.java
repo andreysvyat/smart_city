@@ -1,6 +1,7 @@
 package ru.krd.smc.model.rq;
 
 import lombok.Data;
+import ru.krd.smc.model.enums.CityCaseType;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -13,4 +14,5 @@ public class NewCityCase {
 	private String location;
 	private List<String> images;
 	private ZonedDateTime initedOn;
+	private CityCaseType cityCaseType;
 }

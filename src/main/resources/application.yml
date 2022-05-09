@@ -3,6 +3,11 @@ spring:
     username: postgres
     password: postgres
   jpa:
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 5
+        order_insert: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
     change-log: classpath:db/changelog.xml

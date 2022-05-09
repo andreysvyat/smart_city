@@ -5,10 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import ru.krd.smc.model.enums.CityCaseStatus;
+import ru.krd.smc.model.enums.CityCaseType;
 
 import javax.persistence.*;
-import java.util.List;
-import java.util.UUID;
+import java.time.ZonedDateTime;
+import java.util.*;
+
+import static javax.persistence.EnumType.STRING;
 
 @Data
 @Builder
@@ -24,6 +28,12 @@ public class CityCase {
 
 	private String location;
 	private String description;
+	private ZonedDateTime initedOn;
+
+	@Enumerated(STRING)
+	private CityCaseStatus status;
+	@Enumerated(STRING)
+	private CityCaseType cityCaseType;
 
 	@ElementCollection
 	@CollectionTable(name = "files", joinColumns = @JoinColumn(name = "city_case_id"))

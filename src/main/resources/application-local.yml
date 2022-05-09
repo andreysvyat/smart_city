@@ -2,4 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/smart_city
   jpa:
+    properties:
+      hibernate:
+        generate_statistics: true
     show-sql: true

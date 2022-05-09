@@ -14,12 +14,10 @@ import ru.krd.smc.service.CityCaseProcessor;
 import ru.krd.smc.service.UserProcessor;
 import ru.krd.smc.service.client.AddressRequestor;
 
-import static ru.krd.smc.model.enums.CityCaseProcessorType.GARBAGE;
-import static ru.krd.smc.model.enums.CityCaseProcessorType.GARBAGE_VALUE;
 import static ru.krd.smc.model.enums.CityCaseStatus.NEW;
 
 @Log4j2
-@Service(GARBAGE_VALUE)
+@Service
 @RequiredArgsConstructor
 public class BaseCityCaseProcessor implements CityCaseProcessor {
 
@@ -34,7 +32,7 @@ public class BaseCityCaseProcessor implements CityCaseProcessor {
 						.address(entity.getLocation())
 						.id(entity.getId().toString())
 						.author(entity.getAuthor().getLogin())
-						.status(NEW.display())
+						.status(entity.getStatus().display())
 						.build());
 	}
 
@@ -45,9 +43,12 @@ public class BaseCityCaseProcessor implements CityCaseProcessor {
 		CityCase eCase = cityCaseRepo.save(
 				CityCase.builder()
 						.author(userProcessor.findUser(newCityCase.getUserId()))
+						.initedOn(newCityCase.getInitedOn())
 						.description(newCityCase.getDescription())
 						.location(newCityCase.getLocation())
 						.files(newCityCase.getImages())
+						.status(NEW)
+						.cityCaseType(newCityCase.getCityCaseType())
 						.build()
 		);
 
@@ -56,9 +57,9 @@ public class BaseCityCaseProcessor implements CityCaseProcessor {
 				.id(eCase.getId().toString())
 				.address(addressRequestor.getAddress(newCityCase.getLocation()))
 				.author(eCase.getAuthor().getLogin())
-				.cityCaseType(GARBAGE.name())
+				.cityCaseType(eCase.getCityCaseType().display())
 				.resLinks(eCase.getFiles())
-				.status(NEW.display())
+				.status(eCase.getStatus().display())
 				.build();
 	}
 }
