@@ -33,7 +33,7 @@ public class CityCase {
 	@Enumerated(STRING)
 	private CityCaseStatus status;
 	@Enumerated(STRING)
-	private CityCaseType cityCaseType;
+	private CityCaseType type;
 
 	@ElementCollection
 	@CollectionTable(name = "files", joinColumns = @JoinColumn(name = "city_case_id"))

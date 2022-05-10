@@ -6,4 +6,7 @@
 	<changeSet id="init" author="svyat">
 		<sqlFile path="db/sql/init.sql"/>
 	</changeSet>
+	<changeSet id="sample_data" author="svyat">
+		<sqlFile path="db/sql/sample_data.sql"/>
+	</changeSet>
 </databaseChangeLog>

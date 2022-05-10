@@ -16,7 +16,7 @@ create table if not exists city_case (
     author_id uuid references app_user(id) not null,
     inited_on timestamp with time zone not null,
     status varchar(64) not null,
-    city_case_type varchar(64) not null,
+    type varchar(64) not null,
     primary key (id)
 );
 
@@ -29,5 +29,16 @@ create table if not exists contractor (
 	id uuid not null primary key,
 	"area" text not null,
 	full_name text not null,
-	inn int
-)
+	inn bigint,
+	user_id uuid not null references app_user(id)
+);
+
+create table if not exists okveds(
+    contractor_id uuid not null references contractor(id),
+    division varchar(1) not null,
+    clas int not null,
+    subClas int not null,
+    "group" int not null,
+    subGroup int not null,
+    type int not null
+);

@@ -7,12 +7,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.krd.smc.dba.CityCaseRepo;
 import ru.krd.smc.model.entity.CityCase;
+import ru.krd.smc.model.enums.CityCaseStatus;
+import ru.krd.smc.model.enums.CityCaseType;
 import ru.krd.smc.model.resp.CityCaseShortResp;
 import ru.krd.smc.model.resp.CreatedCityCase;
 import ru.krd.smc.model.rq.NewCityCase;
 import ru.krd.smc.service.CityCaseProcessor;
 import ru.krd.smc.service.UserProcessor;
 import ru.krd.smc.service.client.AddressRequestor;
+import ru.krd.smc.service.client.Notifier;
+
+import java.util.UUID;
 
 import static ru.krd.smc.model.enums.CityCaseStatus.NEW;
 
@@ -24,16 +29,24 @@ public class BaseCityCaseProcessor implements CityCaseProcessor {
 	private final CityCaseRepo cityCaseRepo;
 	private final UserProcessor userProcessor;
 	private final AddressRequestor addressRequestor;
+	private final Notifier notifier;
+
+	@Override
+	public Page<CityCaseShortResp> getCases(Pageable pageable, UUID userId) {
+		return cityCaseRepo.findAllByAuthor(userProcessor.findUser(userId), pageable)
+				.map(this::cityCase2ShortResp);
+	}
+
+	@Override
+	public Page<CityCaseShortResp> getCases(Pageable pageable, CityCaseStatus status, CityCaseType type) {
+		return cityCaseRepo.findAllByTypeAndStatus(type, status, pageable)
+				.map(this::cityCase2ShortResp);
+	}
 
 	@Override
 	public Page<CityCaseShortResp> getCases(Pageable pageable) {
 		return cityCaseRepo.findAll(pageable)
-				.map(entity -> CityCaseShortResp.builder()
-						.address(entity.getLocation())
-						.id(entity.getId().toString())
-						.author(entity.getAuthor().getLogin())
-						.status(entity.getStatus().display())
-						.build());
+				.map(this::cityCase2ShortResp);
 	}
 
 	@Override
@@ -48,18 +61,28 @@ public class BaseCityCaseProcessor implements CityCaseProcessor {
 						.location(newCityCase.getLocation())
 						.files(newCityCase.getImages())
 						.status(NEW)
-						.cityCaseType(newCityCase.getCityCaseType())
+						.type(newCityCase.getCityCaseType())
 						.build()
 		);
-
 		log.trace("Case created {}", eCase.toString());
+
+		notifier.notifyOperators(eCase);
 		return CreatedCityCase.builder()
 				.id(eCase.getId().toString())
 				.address(addressRequestor.getAddress(newCityCase.getLocation()))
 				.author(eCase.getAuthor().getLogin())
-				.cityCaseType(eCase.getCityCaseType().display())
+				.cityCaseType(eCase.getType().display())
 				.resLinks(eCase.getFiles())
 				.status(eCase.getStatus().display())
+				.build();
+	}
+
+	private CityCaseShortResp cityCase2ShortResp(CityCase entity){
+		return CityCaseShortResp.builder()
+				.address(entity.getLocation())
+				.id(entity.getId().toString())
+				.author(entity.getAuthor().getLogin())
+				.status(entity.getStatus().display())
 				.build();
 	}
 }
