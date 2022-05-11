@@ -3,11 +3,11 @@ package ru.krd.smc.model.enums;
 public enum CityCaseStatus implements Displayable {
 	NEW,
 	IN_PROGRESS,
-	DECLINED,
-	ACCEPTED,
-	CLOSED,
+	AT_OPERATOR,
 	AT_CONTRACTOR,
-	HOLD;
+	ACCEPTED,
+	ON_HOLD,
+	CLOSED;
 
 	@Override
 	public String display() {

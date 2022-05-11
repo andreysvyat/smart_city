@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ru.krd.smc.model.enums.CityCaseStatus;
-import ru.krd.smc.model.enums.CityCaseType;
 import ru.krd.smc.model.resp.CityCaseShortResp;
 import ru.krd.smc.model.resp.CreatedCityCase;
 import ru.krd.smc.model.rq.NewCityCase;
@@ -35,7 +34,7 @@ public class CityCaseController {
 	@GetMapping("/{status}")
 	public Page<CityCaseShortResp> get(Pageable pageable,
 	                                   @PathVariable CityCaseStatus status,
-	                                   @RequestParam CityCaseType type){
+	                                   @RequestParam String type){
 		return caseProcessor.getCases(pageable, status, type);
 	}
 

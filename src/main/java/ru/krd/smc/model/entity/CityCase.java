@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import ru.krd.smc.model.enums.CityCaseStatus;
-import ru.krd.smc.model.enums.CityCaseType;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
@@ -28,11 +27,14 @@ public class CityCase {
 
 	private String location;
 	private String description;
+	private String address;
 	private ZonedDateTime initedOn;
 
 	@Enumerated(STRING)
 	private CityCaseStatus status;
-	@Enumerated(STRING)
+
+	@OneToOne
+	@JoinColumn(name = "type", referencedColumnName = "code")
 	private CityCaseType type;
 
 	@ElementCollection

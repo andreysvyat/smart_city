@@ -24,11 +24,18 @@ values
 (uuid_generate_v4(), 'Анапа', 'ООО "Сити Кристалл"', 2301072436, (select id from app_user where email = 'city-crystal@mail.ru')),
 (uuid_generate_v4(), 'Анапа', 'ООО "Славянский дом"', 2301086703, (select id from app_user where email = 'slavyanskiydom777@mail.ru'));
 
-insert into okveds (division, clas, subclas, "group", subGroup, type, contractor_id)
+insert into okveds (id, division, clas, subclas, "group", subGroup, type)
 values
-('N', 81, 2, 9,  9, -1, (select id from contractor where inn = 2301072436)),
-('N', 81, 2, 9,  2, -1, (select id from contractor where inn = 2301072436)),
-('N', 81, 2, 2, -1, -1, (select id from contractor where inn = 2301072436)),
-('M', 71, 1, 1,  1, -1, (select id from contractor where inn = 2301086703)),
-('M', 71, 1, 1,  2, -1, (select id from contractor where inn = 2301086703)),
-('M', 71, 1, 1,  3, -1, (select id from contractor where inn = 2301086703));
+(uuid_generate_v4(), 'N', 81, 2, 9,  9, -1),
+(uuid_generate_v4(), 'N', 81, 2, 9,  2, -1),
+(uuid_generate_v4(), 'N', 81, 2, 2, -1, -1),
+(uuid_generate_v4(), 'M', 71, 1, 1,  1, -1),
+(uuid_generate_v4(), 'M', 71, 1, 1,  2, -1),
+(uuid_generate_v4(), 'M', 71, 1, 1,  3, -1);
+
+insert into contractor_okveds (contractor_id, okved_id)
+values
+((select id from contractor where inn = 2301072436),
+ (select id from okveds where clas = 81 and subclas = 2 and "group" = 9 and subGroup = 9)),
+((select id from contractor where inn = 2301086703),
+ (select id from okveds where clas = 71 and subclas = 1 and "group" = 1 and subGroup = 1));

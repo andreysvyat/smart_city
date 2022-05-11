@@ -13,5 +13,5 @@ public class CreatedCityCase {
 	private String author;
 	private String status;
 	private List<String> resLinks;
-	private String cityCaseType;
+	private String type;
 }

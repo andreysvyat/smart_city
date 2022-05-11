@@ -7,35 +7,25 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.UUID;
-
-import static javax.persistence.FetchType.EAGER;
 
 @Data
 @Entity
 @Builder
 @AllArgsConstructor
-@Table(name = "contractor")
+@Table(name = "city_case_types")
 @NoArgsConstructor
-public class ContractorInfo {
+public class CityCaseType {
 	@Id
 	@GeneratedValue(generator = "UUID")
 	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
 	private UUID id;
 
-	private String area;
-	private String fullName;
-	private long inn;
-
-	@ManyToMany(fetch = EAGER)
-	@JoinTable(name = "contractor_okveds",
-			joinColumns = @JoinColumn(name = "contractor_id"),
-			inverseJoinColumns = @JoinColumn(name = "okved_id")
-	)
-	private List<OKVED> okveds;
-
 	@OneToOne
-	@JoinColumn(name = "user_id")
-	private User user;
+	@JoinColumn(name = "okved_id")
+	private OKVED okved;
+
+	private String name;
+	private String description;
+	private String code;
 }
