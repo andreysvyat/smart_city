@@ -39,3 +39,10 @@ values
  (select id from okveds where clas = 81 and subclas = 2 and "group" = 9 and subGroup = 9)),
 ((select id from contractor where inn = 2301086703),
  (select id from okveds where clas = 71 and subclas = 1 and "group" = 1 and subGroup = 1));
+
+insert into city_case_types (id, "name", description, code, okved_id)
+values
+(uuid_generate_v4(), 'Мусор', 'Необходима уборка мусора', 'GARBAGE',
+ (select id from okveds where clas = 81 and subclas = 2 and "group" = 9 and subGroup = 9)),
+(uuid_generate_v4(), 'Инфраструктура', 'Проблема связанная с инфраструктурой', 'INFRASTRUCTURE',
+ (select id from okveds where clas = 71 and subclas = 1 and "group" = 1 and subGroup = 1));

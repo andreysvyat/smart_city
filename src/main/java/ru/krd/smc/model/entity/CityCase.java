@@ -33,7 +33,7 @@ public class CityCase {
 	@Enumerated(STRING)
 	private CityCaseStatus status;
 
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "type", referencedColumnName = "code")
 	private CityCaseType type;
 

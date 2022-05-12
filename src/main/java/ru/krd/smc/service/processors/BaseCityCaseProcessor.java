@@ -11,6 +11,7 @@ import ru.krd.smc.dba.ContractorRepo;
 import ru.krd.smc.model.entity.CityCase;
 import ru.krd.smc.model.entity.CityCaseType;
 import ru.krd.smc.model.entity.ContractorInfo;
+import ru.krd.smc.model.entity.OKVED;
 import ru.krd.smc.model.enums.CityCaseStatus;
 import ru.krd.smc.model.resp.CityCaseShortResp;
 import ru.krd.smc.model.resp.CreatedCityCase;
@@ -20,6 +21,7 @@ import ru.krd.smc.service.UserProcessor;
 import ru.krd.smc.service.client.AddressRequestor;
 import ru.krd.smc.service.client.Notifier;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static ru.krd.smc.model.enums.CityCaseStatus.*;
@@ -71,9 +73,7 @@ public class BaseCityCaseProcessor implements CityCaseProcessor {
 		);
 		log.trace("Case created {}", eCase.toString());
 
-		lifecycleProcess(eCase);
-
-		notifier.notifyOperators(eCase);
+		notifier.notifyOperators(lifecycleProcess(eCase));
 		return CreatedCityCase.builder()
 				.id(eCase.getId().toString())
 				.address(eCase.getAddress())
@@ -110,15 +110,30 @@ public class BaseCityCaseProcessor implements CityCaseProcessor {
 				}
 				case ACCEPTED -> {
 					log.info("Case {} in status {}", cityCase.getId(), cityCase.getStatus());
-					cityCase.setStatus(AT_CONTRACTOR);
+					processAccepted(cityCase);
 				}
 				case AT_CONTRACTOR -> {
 					log.info("Case {} in status {}", cityCase.getId(), cityCase.getStatus());
-					cityCase.setStatus(CLOSED);
+					processATContractor(cityCase);
 				}
 			}
 		}
 		throw new RuntimeException("Unknown status processing");
+	}
+
+	private void processATContractor(CityCase cityCase) {
+
+	}
+
+	private void processAccepted(CityCase cityCase) {
+		OKVED okved = cityCase.getType().getOkved();
+		Optional<ContractorInfo> contractorInfo =  contractorRepo.findByOkved(okved);
+		if(contractorInfo.isPresent()){
+			cityCase.setStatus(AT_CONTRACTOR);
+			notifier.notifyContractor(contractorInfo.get());
+		} else {
+			cityCase.setStatus(ON_HOLD);
+		}
 	}
 
 	private CityCaseShortResp cityCase2ShortResp(CityCase entity){

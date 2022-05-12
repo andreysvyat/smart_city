@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import ru.krd.smc.model.entity.CityCase;
+import ru.krd.smc.model.entity.ContractorInfo;
 import ru.krd.smc.model.entity.User;
 import ru.krd.smc.service.UserProcessor;
 import ru.krd.smc.service.client.Notifier;
@@ -22,5 +23,10 @@ public class MockNotifier implements Notifier {
 		log.warn("Notify users [{}] that city case {} is changed or created",
 		         userProcessor.getOperators().stream().map(User::getLogin).collect(Collectors.joining(", ")),
 		         cityCaseId.toString());
+	}
+
+	@Override
+	public void notifyContractor(ContractorInfo info) {
+		log.warn("Notify contractor {} via UCIB", info.getFullName());
 	}
 }
