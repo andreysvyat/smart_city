@@ -92,12 +92,12 @@ public class BaseCityCaseProcessor implements CityCaseProcessor {
 	private CityCase lifecycleProcess(CityCase cityCase){
 		while (cityCase.getStatus() != CLOSED){
 			switch (cityCase.getStatus()) {
-				case NEW -> {
+				case NEW: {
 					log.info("Case {} in status {}", cityCase.getId(), cityCase.getStatus());
 					cityCase.setAddress(addressRequestor.getAddress(cityCase.getLocation()));
 					cityCase.setStatus(IN_PROGRESS);
 				}
-				case IN_PROGRESS -> {
+				case IN_PROGRESS: {
 					log.info("Case {} in status {}", cityCase.getId(), cityCase.getStatus());
 					Long sameCount = cityCaseRepo.countByLocationAndInitedOn(cityCase.getLocation(), cityCase.getInitedOn());
 					if(sameCount > 0){
@@ -108,11 +108,11 @@ public class BaseCityCaseProcessor implements CityCaseProcessor {
 					}
 					cityCase.setStatus(ACCEPTED);
 				}
-				case ACCEPTED -> {
+				case ACCEPTED: {
 					log.info("Case {} in status {}", cityCase.getId(), cityCase.getStatus());
 					processAccepted(cityCase);
 				}
-				case AT_CONTRACTOR -> {
+				case AT_CONTRACTOR: {
 					log.info("Case {} in status {}", cityCase.getId(), cityCase.getStatus());
 					processATContractor(cityCase);
 				}
