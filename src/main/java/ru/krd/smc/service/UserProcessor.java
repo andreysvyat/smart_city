@@ -12,4 +12,5 @@ public interface UserProcessor {
 	List<User> getOperators();
 	UserInfo addNewUser(NewUser user);
 	UserInfo getUserInfo(UUID userId);
+	List<UserInfo> getAll();
 }

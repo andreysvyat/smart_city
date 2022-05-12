@@ -13,6 +13,8 @@ import ru.krd.smc.service.UserProcessor;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static ru.krd.smc.model.enums.UserType.OPERATOR;
 
@@ -37,13 +39,27 @@ public class BaseUserProcessor implements UserProcessor {
 	@Override
 	public UserInfo getUserInfo(UUID userId) {
 		return userRepo.findById(userId)
-				.map(it -> UserInfo.builder()
-						.fio(getFio(it))
-						.id(it.getId().toString())
-						.type(it.getType())
-						.orgName(contractorRepo.findByUser(it).map(ContractorInfo::getFullName).orElse(null))
-						.build())
+				.map(this::toUserInfo)
 				.orElseThrow(() -> new RuntimeException("User not found " + userId));
+	}
+
+	@Override
+	public List<UserInfo> getAll() {
+		return StreamSupport.stream(userRepo.findAll().spliterator(), false)
+				.map(this::toUserInfo)
+				.collect(Collectors.toList());
+	}
+
+	private UserInfo toUserInfo(User it) {
+		return UserInfo.builder()
+				.fio(getFio(it))
+				.id(it.getId()
+						    .toString())
+				.type(it.getType())
+				.orgName(contractorRepo.findByUser(it)
+						         .map(ContractorInfo::getFullName)
+						         .orElse(null))
+				.build();
 	}
 
 	@Override

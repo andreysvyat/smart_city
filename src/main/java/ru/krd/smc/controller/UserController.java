@@ -7,6 +7,7 @@ import ru.krd.smc.model.resp.UserInfo;
 import ru.krd.smc.model.rq.NewUser;
 import ru.krd.smc.service.UserProcessor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Log4j2
@@ -22,8 +23,13 @@ public class UserController {
 		return userProcessor.addNewUser(user);
 	}
 
+	@GetMapping("/{id}")
+	public UserInfo getUser(@PathVariable String id){
+		return userProcessor.getUserInfo(UUID.fromString(id));
+	}
+
 	@GetMapping
-	public UserInfo getUser(UUID id){
-		return userProcessor.getUserInfo(id);
+	public List<UserInfo> getAll(){
+		return userProcessor.getAll();
 	}
 }
