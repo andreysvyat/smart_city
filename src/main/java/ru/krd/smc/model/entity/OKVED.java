@@ -9,6 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.UUID;
 
 @Data
@@ -16,6 +17,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "okveds")
 public class OKVED {
 	@Id
 	@GeneratedValue(generator = "UUID")
@@ -25,7 +27,7 @@ public class OKVED {
 	private byte clas;
 	private byte subclas;
 	private byte group;
-	private byte subGroup;
+	private byte subgroup;
 	private byte type;
 	private char division;
 }
