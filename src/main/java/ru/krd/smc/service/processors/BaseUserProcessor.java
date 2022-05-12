@@ -16,6 +16,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static ru.krd.smc.model.enums.UserType.CONTRACTOR;
 import static ru.krd.smc.model.enums.UserType.OPERATOR;
 
 @Service
@@ -56,9 +57,9 @@ public class BaseUserProcessor implements UserProcessor {
 				.id(it.getId()
 						    .toString())
 				.type(it.getType())
-				.orgName(contractorRepo.findByUser(it)
+				.orgName(it.getType() == CONTRACTOR ? contractorRepo.findByUser(it)
 						         .map(ContractorInfo::getFullName)
-						         .orElse(null))
+						         .orElse(null) : null)
 				.build();
 	}
 
