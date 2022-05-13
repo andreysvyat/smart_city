@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
 import ru.krd.smc.model.resp.UserInfo;
+import ru.krd.smc.model.resp.UserInfoShort;
 import ru.krd.smc.model.rq.NewUser;
 import ru.krd.smc.service.UserProcessor;
 
@@ -29,7 +30,7 @@ public class UserController {
 	}
 
 	@GetMapping
-	public List<UserInfo> getAll(){
+	public List<UserInfoShort> getAll(){
 		return userProcessor.getAll();
 	}
 }

@@ -3,11 +3,14 @@ package ru.krd.smc.service.processors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import ru.krd.smc.dba.CityCaseRepo;
 import ru.krd.smc.dba.ContractorRepo;
 import ru.krd.smc.dba.UserRepo;
+import ru.krd.smc.model.entity.CityCase;
 import ru.krd.smc.model.entity.ContractorInfo;
 import ru.krd.smc.model.entity.User;
 import ru.krd.smc.model.resp.UserInfo;
+import ru.krd.smc.model.resp.UserInfoShort;
 import ru.krd.smc.model.rq.NewUser;
 import ru.krd.smc.service.UserProcessor;
 
@@ -26,6 +29,7 @@ public class BaseUserProcessor implements UserProcessor {
 
 	private final UserRepo userRepo;
 	private final ContractorRepo contractorRepo;
+	private final CityCaseRepo cityCaseRepo;
 
 	@Override
 	public User findUser(UUID userId) {
@@ -45,22 +49,10 @@ public class BaseUserProcessor implements UserProcessor {
 	}
 
 	@Override
-	public List<UserInfo> getAll() {
+	public List<UserInfoShort> getAll() {
 		return StreamSupport.stream(userRepo.findAll().spliterator(), false)
-				.map(this::toUserInfo)
+				.map(this::toUserInfoShort)
 				.collect(Collectors.toList());
-	}
-
-	private UserInfo toUserInfo(User it) {
-		return UserInfo.builder()
-				.fio(getFio(it))
-				.id(it.getId()
-						    .toString())
-				.type(it.getType())
-				.orgName(it.getType() == CONTRACTOR ? contractorRepo.findByUser(it)
-						         .map(ContractorInfo::getFullName)
-						         .orElse(null) : null)
-				.build();
 	}
 
 	@Override
@@ -74,10 +66,34 @@ public class BaseUserProcessor implements UserProcessor {
 						.type(user.getType())
 						.email(user.getEmail())
 						.build());
+		return toUserInfo(eUser);
+	}
+
+	private UserInfo toUserInfo(User it){
 		return UserInfo.builder()
-				.type(eUser.getType())
-				.id(eUser.getId().toString())
-				.fio(getFio(eUser))
+				.fio(getFio(it))
+				.id(it.getId().toString())
+				.type(it.getType())
+				.orgName(it.getType() == CONTRACTOR ? contractorRepo.findByUser(it)
+						.map(ContractorInfo::getFullName)
+						.orElse(null) : null)
+				.email(it.getEmail())
+				.cases(cityCaseRepo.findAllByAuthor(it)
+						       .stream()
+						       .map(CityCase::getId)
+						       .map(UUID::toString)
+						       .collect(Collectors.toList()))
+				.build();
+	}
+
+	private UserInfoShort toUserInfoShort(User it) {
+		return UserInfoShort.builder()
+				.fio(getFio(it))
+				.id(it.getId().toString())
+				.type(it.getType())
+				.orgName(it.getType() == CONTRACTOR ? contractorRepo.findByUser(it)
+						.map(ContractorInfo::getFullName)
+						.orElse(null) : null)
 				.build();
 	}
 

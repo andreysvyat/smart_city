@@ -2,6 +2,7 @@ package ru.krd.smc.service;
 
 import ru.krd.smc.model.entity.User;
 import ru.krd.smc.model.resp.UserInfo;
+import ru.krd.smc.model.resp.UserInfoShort;
 import ru.krd.smc.model.rq.NewUser;
 
 import java.util.List;
@@ -12,5 +13,5 @@ public interface UserProcessor {
 	List<User> getOperators();
 	UserInfo addNewUser(NewUser user);
 	UserInfo getUserInfo(UUID userId);
-	List<UserInfo> getAll();
+	List<UserInfoShort> getAll();
 }
