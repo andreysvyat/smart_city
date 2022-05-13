@@ -1,0 +1,3 @@
+#!/bin/bash
+mvn clean package
+scp target/smart-city-0.0.1-SNAPSHOT.jar root@185.246.65.132:/root
