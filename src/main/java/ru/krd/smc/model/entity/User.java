@@ -9,6 +9,7 @@ import ru.krd.smc.model.enums.UserType;
 
 import javax.persistence.*;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 import static javax.persistence.EnumType.STRING;
@@ -19,7 +20,7 @@ import static javax.persistence.EnumType.STRING;
 @AllArgsConstructor
 @Table(name = "app_user")
 @NoArgsConstructor
-public class User {
+public class User implements Serializable {
 	@Id
 	@GeneratedValue(generator = "UUID")
 	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")

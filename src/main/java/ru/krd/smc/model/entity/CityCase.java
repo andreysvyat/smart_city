@@ -1,9 +1,6 @@
 package ru.krd.smc.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import ru.krd.smc.model.enums.CityCaseStatus;
 
@@ -13,7 +10,8 @@ import java.util.*;
 
 import static javax.persistence.EnumType.STRING;
 
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @Entity
@@ -46,6 +44,7 @@ public class CityCase {
 	@JoinColumn(name = "author_id")
 	private User author;
 
-	@OneToMany(mappedBy = "linked")
-	private List<CityCase> linked;
+	@ManyToOne
+	@JoinColumn(name = "linked_to_id")
+	private CityCase linked;
 }

@@ -10,9 +10,9 @@ values
 
 insert into app_user (id, first_name, middle_name, last_name, login, email, "type")
 values
-(uuid_generate_v4(), 'Ibragim', 'Muhametdinov', 'Surenovich', 'ISMuhametdinov', 'ISMuhametdinov@mo.krasnodar.ru', 'OPERARTOR'),
-(uuid_generate_v4(), 'Galina', 'Ivanova', 'Olegovna', 'GOIvanova', 'GOIvanova@mo.krasnodar.ru', 'OPERARTOR'),
-(uuid_generate_v4(), 'Anastasiya', 'Lubimova', 'Valentinovna', 'AVLubimova', 'AVLubimova@mo.krasnodar.ru', 'OPERARTOR');
+(uuid_generate_v4(), 'Ibragim', 'Muhametdinov', 'Surenovich', 'ISMuhametdinov', 'ISMuhametdinov@mo.krasnodar.ru', 'OPERATOR'),
+(uuid_generate_v4(), 'Galina', 'Ivanova', 'Olegovna', 'GOIvanova', 'GOIvanova@mo.krasnodar.ru', 'OPERATOR'),
+(uuid_generate_v4(), 'Anastasiya', 'Lubimova', 'Valentinovna', 'AVLubimova', 'AVLubimova@mo.krasnodar.ru', 'OPERATOR');
 
 insert into app_user (id, first_name, middle_name, last_name, login, email, "type")
 values

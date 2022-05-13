@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ import static javax.persistence.FetchType.EAGER;
 @AllArgsConstructor
 @Table(name = "contractor")
 @NoArgsConstructor
-public class ContractorInfo {
+public class ContractorInfo implements Serializable {
 	@Id
 	@GeneratedValue(generator = "UUID")
 	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")

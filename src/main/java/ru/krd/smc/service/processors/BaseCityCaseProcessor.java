@@ -13,8 +13,8 @@ import ru.krd.smc.model.entity.CityCaseType;
 import ru.krd.smc.model.entity.ContractorInfo;
 import ru.krd.smc.model.entity.OKVED;
 import ru.krd.smc.model.enums.CityCaseStatus;
-import ru.krd.smc.model.resp.CityCaseShortResp;
 import ru.krd.smc.model.resp.CityCaseInfo;
+import ru.krd.smc.model.resp.CityCaseShortResp;
 import ru.krd.smc.model.rq.ContractorNotification;
 import ru.krd.smc.model.rq.NewCityCase;
 import ru.krd.smc.service.CityCaseProcessor;
@@ -61,17 +61,15 @@ public class BaseCityCaseProcessor implements CityCaseProcessor {
 	@Override
 	public CityCaseInfo createCityCase(NewCityCase newCityCase) {
 		log.trace("Start case creation with incoming data {}", newCityCase);
-		CityCase eCase = cityCaseRepo.save(
-				CityCase.builder()
-						.author(userProcessor.findUser(newCityCase.getUserId()))
-						.initedOn(newCityCase.getInitedOn())
-						.description(newCityCase.getDescription())
-						.location(newCityCase.getLocation())
-						.files(newCityCase.getImages())
-						.status(NEW)
-						.type(getCaseType(newCityCase.getType()))
-						.build()
-		);
+		CityCase eCase = CityCase.builder()
+				.author(userProcessor.findUser(newCityCase.getUserId()))
+				.initedOn(newCityCase.getInitedOn())
+				.description(newCityCase.getDescription())
+				.location(newCityCase.getLocation())
+				.files(newCityCase.getImages())
+				.status(NEW)
+				.type(getCaseType(newCityCase.getType()))
+				.build();
 		log.trace("Case created {}", eCase.toString());
 
 		notifier.notifyOperators(lifecycleProcess(eCase));
@@ -87,7 +85,7 @@ public class BaseCityCaseProcessor implements CityCaseProcessor {
 		return toCityCaseInfo(cityCase);
 	}
 
-	private CityCaseType getCaseType(String code){
+	private CityCaseType getCaseType(String code) {
 		return caseTypeRepo.findOneByCode(code)
 				.orElseThrow(() -> new RuntimeException("Unsupported type exception"));
 	}
@@ -101,53 +99,66 @@ public class BaseCityCaseProcessor implements CityCaseProcessor {
 			}
 			case IN_PROGRESS: {
 				log.info("Case {} in status {}", cityCase.getId(), cityCase.getStatus());
-				Long sameCount = cityCaseRepo.countByLocationAndInitedOn(cityCase.getLocation(),
-				                                                         cityCase.getInitedOn());
-				if (sameCount > 0) {
+				Optional<CityCase> same = cityCaseRepo.findDuplicates(
+						cityCase.getId(),
+						cityCase.getLocation(),
+						cityCase.getInitedOn(),
+						LINKED);
+				if (same.isPresent()) {
 					log.info("Case {} is duplicated", cityCase.getId());
 					cityCase.setStatus(LINKED);
-					cityCase.getLinked().add(cityCase);
+					cityCase.setLinked(same.get());
 					cityCaseRepo.save(cityCase);
 					return cityCase;
 				}
 				cityCase.setStatus(ACCEPTED);
+				cityCaseRepo.save(cityCase);
 			}
 			case ACCEPTED: {
 				log.info("Case {} in status {}", cityCase.getId(), cityCase.getStatus());
 				processAccepted(cityCase);
 			}
 		}
-		return cityCase;
+		return cityCaseRepo.save(cityCase);
 	}
 
 	private void processAccepted(CityCase cityCase) {
-		OKVED okved = cityCase.getType().getOkved();
-		Optional<ContractorInfo> contractorInfo =  contractorRepo.findByOkved(okved);
-		if(contractorInfo.isPresent()){
+		OKVED okved = cityCase.getType()
+				.getOkved();
+		Optional<ContractorInfo> contractorInfo = contractorRepo.findByOkved(okved);
+		if (contractorInfo.isPresent()) {
 			cityCase.setStatus(AT_CONTRACTOR);
 			notifier.notifyContractor(contractorInfo.get());
-		} else {
+		}
+		else {
 			cityCase.setStatus(ON_HOLD);
 		}
 	}
 
-	private CityCaseShortResp cityCase2ShortResp(CityCase entity){
+	private CityCaseShortResp cityCase2ShortResp(CityCase entity) {
 		return CityCaseShortResp.builder()
 				.address(entity.getLocation())
-				.id(entity.getId().toString())
-				.author(entity.getAuthor().getLogin())
-				.status(entity.getStatus().display())
+				.id(entity.getId()
+						    .toString())
+				.author(entity.getAuthor()
+						        .getLogin())
+				.status(entity.getStatus()
+						        .display())
 				.build();
 	}
 
-	private CityCaseInfo toCityCaseInfo(CityCase eCase){
+	private CityCaseInfo toCityCaseInfo(CityCase eCase) {
 		return CityCaseInfo.builder()
-				.id(eCase.getId().toString())
+				.id(eCase.getId()
+						    .toString())
 				.address(eCase.getAddress())
-				.author(eCase.getAuthor().getLogin())
-				.type(eCase.getType().getName())
+				.author(eCase.getAuthor()
+						        .getLogin())
+				.type(eCase.getType()
+						      .getName())
 				.resLinks(eCase.getFiles())
-				.status(eCase.getStatus().display())
+				.status(eCase.getStatus()
+						        .display())
 				.build();
 	}
 }

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.UUID;
 
 @Data
@@ -15,7 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Table(name = "city_case_types")
 @NoArgsConstructor
-public class CityCaseType {
+public class CityCaseType implements Serializable {
 	@Id
 	@GeneratedValue(generator = "UUID")
 	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
