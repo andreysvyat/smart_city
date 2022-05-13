@@ -72,6 +72,7 @@ public class BaseUserProcessor implements UserProcessor {
 						.login(user.getLogin())
 						.middleName(user.getMiddleName())
 						.type(user.getType())
+						.email(user.getEmail())
 						.build());
 		return UserInfo.builder()
 				.type(eUser.getType())
