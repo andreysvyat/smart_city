@@ -14,7 +14,8 @@ import ru.krd.smc.model.entity.ContractorInfo;
 import ru.krd.smc.model.entity.OKVED;
 import ru.krd.smc.model.enums.CityCaseStatus;
 import ru.krd.smc.model.resp.CityCaseShortResp;
-import ru.krd.smc.model.resp.CreatedCityCase;
+import ru.krd.smc.model.resp.CityCaseInfo;
+import ru.krd.smc.model.rq.ContractorNotification;
 import ru.krd.smc.model.rq.NewCityCase;
 import ru.krd.smc.service.CityCaseProcessor;
 import ru.krd.smc.service.UserProcessor;
@@ -58,7 +59,7 @@ public class BaseCityCaseProcessor implements CityCaseProcessor {
 	}
 
 	@Override
-	public CreatedCityCase createCityCase(NewCityCase newCityCase) {
+	public CityCaseInfo createCityCase(NewCityCase newCityCase) {
 		log.trace("Start case creation with incoming data {}", newCityCase);
 		CityCase eCase = cityCaseRepo.save(
 				CityCase.builder()
@@ -74,14 +75,16 @@ public class BaseCityCaseProcessor implements CityCaseProcessor {
 		log.trace("Case created {}", eCase.toString());
 
 		notifier.notifyOperators(lifecycleProcess(eCase));
-		return CreatedCityCase.builder()
-				.id(eCase.getId().toString())
-				.address(eCase.getAddress())
-				.author(eCase.getAuthor().getLogin())
-				.type(eCase.getType().getName())
-				.resLinks(eCase.getFiles())
-				.status(eCase.getStatus().display())
-				.build();
+		return toCityCaseInfo(eCase);
+	}
+
+	@Override
+	public CityCaseInfo handleContractorNotification(ContractorNotification notification) {
+		CityCase cityCase = cityCaseRepo.findById(UUID.fromString(notification.getCityCaseId()))
+				.orElseThrow(() -> new RuntimeException("Case is not presented. ID = " + notification.getCityCaseId()));
+
+		cityCase.setStatus(notification.getStatus());
+		return toCityCaseInfo(cityCase);
 	}
 
 	private CityCaseType getCaseType(String code){
@@ -89,40 +92,32 @@ public class BaseCityCaseProcessor implements CityCaseProcessor {
 				.orElseThrow(() -> new RuntimeException("Unsupported type exception"));
 	}
 
-	private CityCase lifecycleProcess(CityCase cityCase){
-		while (cityCase.getStatus() != CLOSED){
-			switch (cityCase.getStatus()) {
-				case NEW: {
-					log.info("Case {} in status {}", cityCase.getId(), cityCase.getStatus());
-					cityCase.setAddress(addressRequestor.getAddress(cityCase.getLocation()));
-					cityCase.setStatus(IN_PROGRESS);
+	private CityCase lifecycleProcess(CityCase cityCase) {
+		switch (cityCase.getStatus()) {
+			case NEW: {
+				log.info("Case {} in status {}", cityCase.getId(), cityCase.getStatus());
+				cityCase.setAddress(addressRequestor.getAddress(cityCase.getLocation()));
+				cityCase.setStatus(IN_PROGRESS);
+			}
+			case IN_PROGRESS: {
+				log.info("Case {} in status {}", cityCase.getId(), cityCase.getStatus());
+				Long sameCount = cityCaseRepo.countByLocationAndInitedOn(cityCase.getLocation(),
+				                                                         cityCase.getInitedOn());
+				if (sameCount > 0) {
+					log.info("Case {} is duplicated", cityCase.getId());
+					cityCase.setStatus(LINKED);
+					cityCase.getLinked().add(cityCase);
+					cityCaseRepo.save(cityCase);
+					return cityCase;
 				}
-				case IN_PROGRESS: {
-					log.info("Case {} in status {}", cityCase.getId(), cityCase.getStatus());
-					Long sameCount = cityCaseRepo.countByLocationAndInitedOn(cityCase.getLocation(), cityCase.getInitedOn());
-					if(sameCount > 0){
-						cityCase.setStatus(CLOSED);
-						cityCaseRepo.save(cityCase);
-						log.info("Case {} is duplicated", cityCase.getId());
-						return cityCase;
-					}
-					cityCase.setStatus(ACCEPTED);
-				}
-				case ACCEPTED: {
-					log.info("Case {} in status {}", cityCase.getId(), cityCase.getStatus());
-					processAccepted(cityCase);
-				}
-				case AT_CONTRACTOR: {
-					log.info("Case {} in status {}", cityCase.getId(), cityCase.getStatus());
-					processATContractor(cityCase);
-				}
+				cityCase.setStatus(ACCEPTED);
+			}
+			case ACCEPTED: {
+				log.info("Case {} in status {}", cityCase.getId(), cityCase.getStatus());
+				processAccepted(cityCase);
 			}
 		}
-		throw new RuntimeException("Unknown status processing");
-	}
-
-	private void processATContractor(CityCase cityCase) {
-
+		return cityCase;
 	}
 
 	private void processAccepted(CityCase cityCase) {
@@ -142,6 +137,17 @@ public class BaseCityCaseProcessor implements CityCaseProcessor {
 				.id(entity.getId().toString())
 				.author(entity.getAuthor().getLogin())
 				.status(entity.getStatus().display())
+				.build();
+	}
+
+	private CityCaseInfo toCityCaseInfo(CityCase eCase){
+		return CityCaseInfo.builder()
+				.id(eCase.getId().toString())
+				.address(eCase.getAddress())
+				.author(eCase.getAuthor().getLogin())
+				.type(eCase.getType().getName())
+				.resLinks(eCase.getFiles())
+				.status(eCase.getStatus().display())
 				.build();
 	}
 }

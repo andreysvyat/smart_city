@@ -36,6 +36,7 @@ create table if not exists city_case (
     status varchar(64) not null,
     type varchar(64) not null references city_case_types(code),
     address text,
+    linked_to_id uuid not null references city_case(id),
     primary key (id)
 );
 

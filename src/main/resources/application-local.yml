@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/smart_city
+    url: jdbc:postgresql://185.246.65.132:5432/smart_city
   jpa:
     properties:
       hibernate:

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.krd.smc.model.entity.CityCase;
 import ru.krd.smc.model.entity.ContractorInfo;
 import ru.krd.smc.model.entity.User;
+import ru.krd.smc.service.CityCaseProcessor;
 import ru.krd.smc.service.UserProcessor;
 import ru.krd.smc.service.client.Notifier;
 

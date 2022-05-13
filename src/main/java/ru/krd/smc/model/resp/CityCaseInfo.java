@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class CreatedCityCase {
+public class CityCaseInfo {
 	private String id;
 	private String address;
 	private String author;

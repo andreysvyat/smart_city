@@ -7,6 +7,7 @@ public enum CityCaseStatus implements Displayable {
 	AT_CONTRACTOR,
 	ACCEPTED,
 	ON_HOLD,
+	LINKED,
 	CLOSED;
 
 	@Override

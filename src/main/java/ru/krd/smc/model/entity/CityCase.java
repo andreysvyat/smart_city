@@ -45,4 +45,7 @@ public class CityCase {
 	@ManyToOne
 	@JoinColumn(name = "author_id")
 	private User author;
+
+	@OneToMany(mappedBy = "linked")
+	private List<CityCase> linked;
 }

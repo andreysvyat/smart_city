@@ -7,7 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ru.krd.smc.model.enums.CityCaseStatus;
 import ru.krd.smc.model.resp.CityCaseShortResp;
-import ru.krd.smc.model.resp.CreatedCityCase;
+import ru.krd.smc.model.resp.CityCaseInfo;
+import ru.krd.smc.model.rq.ContractorNotification;
 import ru.krd.smc.model.rq.NewCityCase;
 import ru.krd.smc.service.CityCaseProcessor;
 
@@ -39,7 +40,12 @@ public class CityCaseController {
 	}
 
 	@PostMapping
-	public CreatedCityCase newCityCase(@RequestBody NewCityCase cityCase){
+	public CityCaseInfo newCityCase(@RequestBody NewCityCase cityCase){
 		return caseProcessor.createCityCase(cityCase);
+	}
+
+	@PostMapping("/notify_us")
+	public CityCaseInfo handleContractorNotification(@RequestBody ContractorNotification notification){
+		return caseProcessor.handleContractorNotification(notification);
 	}
 }
