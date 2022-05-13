@@ -78,6 +78,7 @@ public class BaseUserProcessor implements UserProcessor {
 						.map(ContractorInfo::getFullName)
 						.orElse(null) : null)
 				.email(it.getEmail())
+				.login(it.getLogin())
 				.cases(cityCaseRepo.findAllByAuthor(it)
 						       .stream()
 						       .map(CityCase::getId)
