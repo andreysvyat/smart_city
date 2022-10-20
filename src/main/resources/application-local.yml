@@ -1,6 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://185.246.65.132:5432/smart_city
+    username: mafia_user
+    password: mafia_pass
+    url: jdbc:postgresql://185.246.65.132:5433/mafia
   jpa:
     properties:
       hibernate:
